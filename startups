@@ -1,0 +1,39 @@
+install.packages("neuralnet")
+library(neuralnet)
+
+
+startups<-read.csv("C:/Users/blacksnake/Downloads/50_Startups.csv")
+
+startups<-startups[,-4]
+View(startups)
+
+normalize<- function(x) {
+  return((x-min(x))/(max(x)-min(x)))
+}
+
+startups_norm<-as.data.frame(lapply(startups,normalize))
+
+startups_train<-startups_norm[1:35,]
+startups_test<-startups_norm[36:50,]
+
+startups_model<-neuralnet(formula= Profit~.,data=startups_train)
+plot(startups_model)
+
+model_results<-compute(startups_model,startups_test[1:3])
+predicted_profit<-model_results$net.result
+cor(predicted_profit,startups_test$Profit)
+
+startups_model2<-neuralnet(formula = Profit~.,data=startups_train,hidden = c(2,1))
+plot(startups_model2)
+
+model_results2<-compute(startups_model2,startups_test[1:3])
+predicted_profit2<-model_results2$net.result
+cor(predicted_profit2,startups_test$Profit)
+
+startups_model3<-neuralnet(formula= Profit~.,data=startups_train,hidden= c(3,2))
+plot(startups_model3)
+
+model_results3<-compute(startups_model3,startups_test[1:3])
+predicted_profit3<- model_results3$net.result
+cor(predicted_profit3,startups_test$Profit)
+
