@@ -1,0 +1,30 @@
+install.packages("neuralnet")
+library(neuralnet)
+
+
+View(forestfires)
+
+normalize<-function(x){
+  return((x-min(x))/(max(x)-min(x)))
+}
+
+forestfires_norm<-as.data.frame(lapply(forestfires[3:30],normalize))
+forestfires_norm
+
+forestfires_train<-forestfires_norm[1:470,]
+forestfires_test<-forestfires_norm[471:517,]
+
+ff_model<-neuralnet(formula= area~.,data=forestfires_train)
+plot(ff_model)
+
+model_results<-compute(ff_model,forestfires_test)
+predicted_area<-model_results$net.result
+cor(predicted_area,forestfires_test$area)
+
+ff_model_2<- neuralnet(formula = area~., data = forestfires_train, hidden = c(2,3,1))
+plot(ff_model_2)
+
+model_results_2<-compute(ff_model_2,forestfires_test)
+predicted_model_2<- model_results_2$net.result
+cor(predicted_model_2,forestfires_test$area)
+
